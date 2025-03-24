@@ -176,7 +176,7 @@ class BookingRoomResource extends Resource
         return $reservations->flatMap(fn ($reservation) =>
             collect(CarbonPeriod::create(
                 Carbon::parse($reservation->check_in),
-                Carbon::parse($reservation->check_out)->subDay()
+                Carbon::parse($reservation->check_out)
             ))->map(fn ($date) => $date->format('Y-m-d'))
         )->toArray();
     }
