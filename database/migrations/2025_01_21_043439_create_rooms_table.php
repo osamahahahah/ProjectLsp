@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('facilities')->nullable();
             $table->json('room_type');
             $table->decimal('price', 10, 2);
+            $table->json('image')->Nullable();
             $table->json('status')->notNullable(); 
             $table->timestamps();
         });

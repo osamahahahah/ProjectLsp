@@ -56,7 +56,11 @@ class BookingUserResource extends Resource
         ->columns([
             Tables\Columns\TextColumn::make('room.room_number')
                 ->label('Room')
-                ->searchable(),
+                ->searchable()
+                ->weight('bold')
+                ->color('primary')
+                ->alignCenter()
+                ->size('lg'),
 
             Tables\Columns\TextColumn::make('check_in')
                 ->label('Check-In')
@@ -75,7 +79,8 @@ class BookingUserResource extends Resource
                         'confirmed' => 'success',
                         'canceled' => 'danger',
                 })
-                ->badge(),
+                ->badge()
+                
 
         ])
             ->filters([

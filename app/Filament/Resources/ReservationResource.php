@@ -46,13 +46,13 @@ class ReservationResource extends Resource
                 TextInput::make('user_id')
                 ->label('User')
                 ->disabled()
-                ->default(fn ($record) => $record->user?->name)
+                ->default(fn ($record) => $record ? $record->user?->name : null)
                 ->formatStateUsing(fn ($state) => User::find($state)?->name ?? 'Unknown'),
 
              TextInput::make('room_id')
             ->label('Room')
             ->disabled()
-            ->default(fn ($record) => $record->room?->room_number)
+            ->default(fn ($record) => $record ? $record->room?->room_number : null)
             ->formatStateUsing(fn ($state) => Room::find($state)?->room_number ?? 'Unknown'),
                 Forms\Components\DatePicker::make('check_in')->label('Check-In'),
                 Forms\Components\DatePicker::make('check_out')->label('Check-Out'),

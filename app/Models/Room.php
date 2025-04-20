@@ -12,7 +12,7 @@ class Room extends Model
 
     protected $casts = [
         'room_type' => 'array',
-        'images' => 'array',
+        'image' => 'array',
         'status' => 'array',
     ];
 

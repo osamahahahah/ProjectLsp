@@ -23,12 +23,15 @@ class StatsDashboard extends BaseWidget
         $endDate = $this->filters['endDate'] ?? now()->endOfYear();
 
 
-        $totalRevenue = Reservation::whereBetween('check_in', [$startDate, $endDate])->sum('total_price');
+        $totalRevenue = Reservation::whereBetween('check_in', [$startDate, $endDate])
+                        ->where('status', 'confirmed')
+                        ->sum('total_price');
 
         $countroom = Room::count();
-        $countbooking = reservation::count();
+        $countbooking = reservation::where('status', 'confirmed')->count();
 
         $popularRoom = Reservation::select('room_id', DB::raw('count(*) as total'))
+        ->where('status', 'confirmed')
         ->groupBy('room_id')
         ->orderByDesc('total')
         ->first();

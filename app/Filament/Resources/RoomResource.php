@@ -17,6 +17,7 @@ use Illuminate\Support\Arr;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Set;
+use Filament\Forms\Components\FileUpload;
 
 class RoomResource extends Resource
 {
@@ -52,14 +53,39 @@ class RoomResource extends Resource
             Forms\Components\TextInput::make('price')
                 ->prefix('Rp.')
                 ->numeric(),
+
+                FileUpload::make('image')
+                ->multiple()
+                ->disk('public')
+                ->directory('room-images') // direktori penyimpanan
+                ->imagePreviewHeight('100')
+                ->acceptedFileTypes(['image/*'])
+                ->loadingIndicatorPosition('left')
+                ->panelAspectRatio('2:1')
+                ->panelLayout('grid')
+                ->removeUploadedFileButtonPosition('right')
+                ->uploadButtonPosition('left')
+                ->uploadProgressIndicatorPosition('left')
+                ->saveRelationshipsUsing(function ($record, $state) {
+                    if (!empty($state)) {
+                        $record->image = $state;
+                        $record->save();
+                    }
+                }),
+
                 Forms\Components\Toggle::make('status')
                 ->label('Status')
                 ->onColor('success')
                 ->offColor('danger')
                 ->dehydrateStateUsing(fn ($state) => [$state ? 'true' : 'false'])
-                ->afterStateHydrated(fn ($state, Set $set) =>
-                    $set('status', is_array($state) ? $state[0] === 'true' : json_decode($state, true)[0] === 'true')
-                )
+                ->afterStateHydrated(function ($state, Set $set) {
+                    if (is_array($state)) {
+                        $set('status', isset($state[0]) && $state[0] === 'true');
+                    } else {
+                        $decoded = json_decode($state, true);
+                        $set('status', is_array($decoded) && isset($decoded[0]) && $decoded[0] === 'true');
+                    }
+                })
                 ->inline(false),
             ]);
     }
@@ -84,6 +110,16 @@ class RoomResource extends Resource
             ->getStateUsing(fn ($record) =>
         is_array($record->status) ? ($record->status[0] === 'true') : (json_decode($record->status, true)[0] === 'true')
     ),
+    ImageColumn::make('image')
+    ->label('Room Image')
+    ->getStateUsing(fn ($record) => 
+    // Pastikan $record->image bukan null dan merupakan array
+    is_array($record->image) && !empty($record->image) 
+        ? asset('storage/' . (Arr::first(array_values($record->image)) ?? ''))
+        : null // Jika kosong, kembalikan null
+)
+    ->width(100)
+    ->height(100),
     ])
 
             ->filters([

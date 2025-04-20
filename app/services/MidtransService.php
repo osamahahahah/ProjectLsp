@@ -17,9 +17,12 @@ class MidtransService
 
     public function createTransaction(Reservation $reservation)
     {
+        // Buat custom order ID yang dimulai dari 0
+        $bookingNumber = $this->generateBookingNumber($reservation->id);
+        
         $transaction = [
             'transaction_details' => [
-                'order_id' => 'BOOK-' . $reservation->id,
+                'order_id' => 'BOOK-' . $bookingNumber,
                 'gross_amount' => $reservation->total_price,
             ],
             'customer_details' => [
@@ -36,5 +39,27 @@ class MidtransService
         $snapTransaction = Snap::createTransaction($transaction);
 
         return $snapTransaction->token;
+    }
+    
+    /**
+     * Generate booking number yang dimulai dari 0
+     * 
+     * @param int $reservationId
+     * @return int
+     */
+    private function generateBookingNumber($reservationId)
+    {
+        // Cari reservasi dengan ID terkecil untuk offset
+        $firstReservation = Reservation::orderBy('id', 'asc')->first();
+        
+        if (!$firstReservation) {
+            return 0; // Jika tidak ada reservasi, mulai dari 0
+        }
+        
+        // Kurangi ID reservasi saat ini dengan ID reservasi pertama
+        // lalu tambahkan 0 agar nomor booking dimulai dari 0
+        $bookingNumber = $reservationId - $firstReservation->id;
+        
+        return $bookingNumber;
     }
 }

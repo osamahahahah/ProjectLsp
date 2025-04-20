@@ -23,6 +23,7 @@ class ZeservationWidget extends BaseWidget
         ->query(
             Reservation::where('check_in', '<=', Carbon::now())
                 ->where('check_out', '>=', Carbon::now())
+                ->where('status', 'confirmed')
         )
         ->defaultSort('check_in', 'asc')
         ->columns([
@@ -31,5 +32,5 @@ class ZeservationWidget extends BaseWidget
             Tables\Columns\TextColumn::make('check_in')->label('Check-In')->date(),
             Tables\Columns\TextColumn::make('check_out')->label('Check-Out')->date(),
         ]);
-}
+    }
 }
