@@ -24,6 +24,7 @@ class StatsDashboard extends BaseWidget
 
 
         $totalRevenue = Reservation::whereBetween('check_in', [$startDate, $endDate])
+                        // Reservation::whereBetween('created_at', [$startDate, $endDate])
                         ->where('status', 'confirmed')
                         ->sum('total_price');
 
