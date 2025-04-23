@@ -41,7 +41,17 @@ class WidgetBookingChart extends ChartWidget
                 [
                     'label' => 'Jumlah Booking',
                     'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
+                    'backgroundColor' => '#36A2EB',
+                    'borderColor' => '#2196F3',
+                    'borderWidth' => 2,
+                    'pointBackgroundColor' => '#2196F3',
+                    'pointBorderColor' => '#ffffff',
+                    'pointHoverBackgroundColor' => '#ffffff',
+                    'pointHoverBorderColor' => '#2196F3',
+                    'tension' => 0.3,
+                    'fill' => false,
                 ],
+                
             ],
             'labels' => $data->map(fn (TrendValue $value) => $value->date),
         ];
